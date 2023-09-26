@@ -1,8 +1,8 @@
-package main 
+package main
 
 import (
-	"chip-8/structs"
 	"chip-8/periph"
+	"chip-8/structs"
 )
 
 func main() {
@@ -13,14 +13,13 @@ func main() {
 
 	chip8.Load() // load the game into the memory
 
-	for (true) {
+	for true {
 		chip8.EmulateOneCycle() // emulate one cycle
 
-		if (chip8.Reg[15] == 1) { //if drawFlag is true
-			drawGraphics()
+		if chip8.DrawFlag { //if drawFlag is true
+			//DrawGraphics()
 		}
 
-		periph.SetKeys()  // set the keys pressed
+		periph.SetKeys() // set the keys pressed
 	}
 }
-
