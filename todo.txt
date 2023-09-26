@@ -1,0 +1,17 @@
+Drawing system (screen)
+
+keyboard system
+
+loading memory from roam system
+
+
+
+
+mainStruct opcode :
+0x00E0
+0x00EE
+0x2NNN
+0xDXYN
+0xEX9E
+0xEXA1
+0xFX0A

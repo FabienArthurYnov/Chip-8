@@ -211,7 +211,7 @@ func (chip8 *Chip8) EmulateOneCycle() {
 		case 0x65:
 			// load dans la mémoire
 			index := chip8.I
-			for indexReg, _ := range chip8.Reg {
+			for indexReg := range chip8.Reg {
 				chip8.Reg[indexReg] = chip8.Memory[index]
 				index += 1
 			}
