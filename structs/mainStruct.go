@@ -3,12 +3,15 @@ package structs
 import "chip-8/utility"
 
 type Chip8 struct {
-	Opcode byte
+	Opcode uint16
 	Memory [4096]byte
 	Reg    [16]byte // register (memoire temporaire)
 
 	I  uint16 // 16-bit index register for memory address
 	Pc int    //program counter
+
+	DelayTimer int // timer -1/s
+	SoundTimer int //timer -1/s
 
 	Screen   [64][32]bool // true = white pixel, false = black pixel
 	Keyboard [16]byte     // not sure about type
@@ -28,6 +31,7 @@ func (chip8 *Chip8) EmulateOneCycle() {
 	first = first << 8                                   // 0xA200  décale le byte de 8 / ajoute un byte derrière
 
 	var opcode uint16 = first | second // 0xA23B   OR du byte vide
+	chip8.Opcode = opcode
 
 	opcode1 := opcode >> 12          // 0xA  first hexa number
 	opcode2 := (opcode >> 8) & 0x0F  // 0x2  second...
@@ -158,6 +162,7 @@ func (chip8 *Chip8) EmulateOneCycle() {
 			// if the keycode in chip8.Reg[opcode2] is pressed {
 			// 		chip8.Pc += 2 // skip the next instruction
 			// }
+
 		case 0xa1:
 			// if the keycode in chip8.Reg[opcode2] is NOT pressed {
 			// 		chip8.Pc += 2 // skip the next instruction
@@ -166,9 +171,51 @@ func (chip8 *Chip8) EmulateOneCycle() {
 
 	case 0xf:
 		switch opcode34 {
+		case 0x07:
+			chip8.Reg[opcode2] = byte(chip8.DelayTimer) // set Vx to DelayTimer
 
+		case 0x0a:
+			// A key press is awaited, and then stored in VX (blocking operation, all instruction halted until next key event).
+
+		case 0x15:
+			chip8.DelayTimer = int(chip8.Reg[opcode2]) // set DelayTimer to Vx
+
+		case 0x18:
+			chip8.SoundTimer = int(chip8.Reg[opcode2]) // set SoundTimer to Vx
+
+		case 0x1e:
+			chip8.I += uint16(chip8.Reg[opcode2])
+
+		case 0x29:
+			// font set start at 0 and each one take 5 bytes
+			chip8.I = uint16(0x0 + (0x5 * chip8.Reg[opcode2]))
+
+		case 0x33:
+			// save l'expression binaire du décimal dans la mémoire
+			numInt := int(chip8.Reg[opcode2])
+			hundreds := numInt / 100
+			tens := (numInt - hundreds*100) / 10
+			units := (numInt - hundreds*100 - tens*10)
+			chip8.Memory[chip8.I] = byte(hundreds)
+			chip8.Memory[chip8.I] = byte(tens)
+			chip8.Memory[chip8.I] = byte(units)
+
+		case 0x55:
+			// save dans la mémoire
+			index := chip8.I
+			for _, reg := range chip8.Reg {
+				chip8.Memory[index] = reg
+				index += 1
+			}
+
+		case 0x65:
+			// load dans la mémoire
+			index := chip8.I
+			for indexReg, _ := range chip8.Reg {
+				chip8.Reg[indexReg] = chip8.Memory[index]
+				index += 1
+			}
 		}
-
 	}
 
 	chip8.Pc += 2
