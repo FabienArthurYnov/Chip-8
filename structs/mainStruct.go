@@ -13,6 +13,9 @@ type Chip8 struct {
 	DelayTimer int // timer -1/s
 	SoundTimer int //timer -1/s
 
+	Stack        [16]int // addresses stacks
+	StackPointer int     // where are we in the stack
+
 	Screen   [64][32]bool // true = white pixel, false = black pixel
 	Keyboard [16]byte     // not sure about type
 
@@ -50,6 +53,8 @@ func (chip8 *Chip8) EmulateOneCycle() {
 		}
 		if opcode == 0x00EE {
 			// return from subroutine
+			chip8.StackPointer--
+			chip8.Pc = chip8.Stack[chip8.StackPointer]
 		}
 
 	case 0x1:
@@ -57,6 +62,11 @@ func (chip8 *Chip8) EmulateOneCycle() {
 
 	case 0x2:
 		//call subroutine at opcode234
+		// add the pc now to the stack, and go to the next stack pointer
+		chip8.Stack[chip8.StackPointer] = chip8.Pc
+		chip8.StackPointer++
+		// go to subroutine
+		chip8.Pc = int(chip8.Reg[opcode234])
 
 	case 0x3:
 		if chip8.Reg[opcode2] == opcode34 {
@@ -203,16 +213,16 @@ func (chip8 *Chip8) EmulateOneCycle() {
 		case 0x55:
 			// save dans la mémoire
 			index := chip8.I
-			for _, reg := range chip8.Reg {
-				chip8.Memory[index] = reg
+			for i := 0; i > int(opcode2); i++ {
+				chip8.Memory[index] = chip8.Reg[i]
 				index += 1
 			}
 
 		case 0x65:
 			// load dans la mémoire
 			index := chip8.I
-			for indexReg := range chip8.Reg {
-				chip8.Reg[indexReg] = chip8.Memory[index]
+			for i := 0; i > int(opcode2); i++ {
+				chip8.Reg[i] = chip8.Memory[index]
 				index += 1
 			}
 		}
