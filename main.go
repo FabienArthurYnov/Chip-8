@@ -11,10 +11,10 @@ func main() {
 	periph.SetupGraphics()
 	periph.SetupInput()
 
-	Load() // load the game into the memory
+	chip8.Load() // load the game into the memory
 
 	for (true) {
-		EmulateOneCycle() // emulate one cycle
+		chip8.EmulateOneCycle() // emulate one cycle
 
 		if (chip8.Reg[15] == 1) { //if drawFlag is true
 			drawGraphics()
@@ -22,9 +22,5 @@ func main() {
 
 		periph.SetKeys()  // set the keys pressed
 	}
-
 }
 
-func Load() {
-	//WIP
-}
