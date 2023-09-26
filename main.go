@@ -3,6 +3,7 @@ package main
 import (
 	"chip-8/periph"
 	"chip-8/structs"
+	"chip-8/utility"
 	"time"
 )
 
@@ -13,7 +14,9 @@ func main() {
 	periph.SetupGraphics()
 	periph.SetupInput()
 
-	chip8.Load() // load the game into the memory
+	var fileName string = utility.InputFileName()
+
+	chip8.Load(fileName) // load the game into the memory
 
 	for true {
 		chip8.EmulateOneCycle() // emulate one cycle
