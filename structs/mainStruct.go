@@ -1,12 +1,14 @@
 package structs
 
+import "chip-8/utility"
+
 type Chip8 struct {
 	Opcode byte
 	Memory [4096]byte
 	Reg    [16]byte // register (memoire temporaire)
 
-	I  int // index register
-	Pc int //program counter
+	I  uint16 // 16-bit index register for memory address
+	Pc int    //program counter
 
 	Screen   [64][32]bool // true = white pixel, false = black pixel
 	Keyboard [16]byte     // not sure about type
@@ -39,6 +41,7 @@ func (chip8 *Chip8) EmulateOneCycle() {
 	switch opcode1 {
 	case 0x0:
 		if opcode == 0x00E0 {
+			chip8.DrawFlag = true
 			// clear screen
 		}
 		if opcode == 0x00EE {
@@ -46,25 +49,25 @@ func (chip8 *Chip8) EmulateOneCycle() {
 		}
 
 	case 0x1:
-		//goto opcode234
+		chip8.Pc = int(opcode234) //goto opcode234
 
 	case 0x2:
 		//call subroutine at opcode234
 
 	case 0x3:
 		if chip8.Reg[opcode2] == opcode34 {
-			//skip next instruction
+			chip8.Pc += 2 //skip next instruction
 		}
 
 	case 0x4:
 		if chip8.Reg[opcode2] != opcode34 {
-			//skip next instruction
+			chip8.Pc += 2 //skip next instruction
 		}
 
 	case 0x5:
 		if opcode4 == 0x0 {
 			if chip8.Reg[opcode2] == chip8.Reg[opcode3] {
-				//skip next instruction
+				chip8.Pc += 2 //skip next instruction
 			}
 		}
 
@@ -125,6 +128,45 @@ func (chip8 *Chip8) EmulateOneCycle() {
 		case 0xE:
 			chip8.Reg[0xF] = chip8.Reg[opcode2] & 0b10000000 // get most significant bit
 			chip8.Reg[opcode2] = chip8.Reg[opcode2] << 1     // shift to the left
+		}
+
+	case 0x9:
+		if opcode4 == 0x0 {
+			if chip8.Reg[opcode2] != chip8.Reg[opcode3] {
+				chip8.Pc += 2 // skip the next instruction
+			}
+		}
+
+	case 0xa:
+		chip8.I = opcode234 // I register set to opcode234
+
+	case 0xb:
+		chip8.Pc = int(opcode234) + int(chip8.Reg[0x0]) // goto opcode234 + reg0
+
+	case 0xc:
+		chip8.Reg[opcode2] = utility.RandomByte() & opcode34 // Vx = random number & opcode34
+
+	case 0xd:
+		chip8.DrawFlag = true
+		/*Draws a sprite at coordinate (VX, VY) that has a width of 8 pixels and a height of N pixels.
+		Each row of 8 pixels is read as bit-coded starting from memory location I; I value does not change after the execution of this instruction.
+		As described above, VF is set to 1 if any screen pixels are flipped from set to unset when the sprite is drawn, and to 0 if that does not happen.*/
+
+	case 0xe:
+		switch opcode34 {
+		case 0x9e:
+			// if the keycode in chip8.Reg[opcode2] is pressed {
+			// 		chip8.Pc += 2 // skip the next instruction
+			// }
+		case 0xa1:
+			// if the keycode in chip8.Reg[opcode2] is NOT pressed {
+			// 		chip8.Pc += 2 // skip the next instruction
+			// }
+		}
+
+	case 0xf:
+		switch opcode34 {
+
 		}
 
 	}

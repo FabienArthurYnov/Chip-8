@@ -19,6 +19,7 @@ func main() {
 		if chip8.DrawFlag { //if drawFlag is true
 			//DrawGraphics()
 		}
+		chip8.DrawFlag = false
 
 		periph.SetKeys() // set the keys pressed
 	}
