@@ -2,6 +2,7 @@ package structs
 
 import (
 	"chip-8/utility"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -30,31 +31,40 @@ type Chip8 struct {
 func (chip8 *Chip8) Load(fileName string) {
 	chip8.Pc = 512
 
-	file, err := os.OpenFile("./rom/" + fileName + ".ch8", os.O_RDONLY, 0777)
+	file, err := os.OpenFile("./rom/"+fileName+".ch8", os.O_RDONLY, 0777)
 	if err != nil {
 		log.Fatal(err)
 	}
-	
+
 	defer file.Close()
 
-	fileByte, err := ioutil.ReadAll(file) 
+	fileByte, err := ioutil.ReadAll(file)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	for i:= 0; i < len(fileByte); i++ {
-		chip8.Memory[i + 512] = fileByte[i]
+	for i := 0; i < len(fileByte); i++ {
+		chip8.Memory[i+512] = fileByte[i]
 	}
 	//WIP
 }
 
 func (chip8 *Chip8) EmulateOneCycle() {
 	//fetch opcode  ex 0xA23B
-	var first uint16 = uint16(chip8.Memory[chip8.Pc])    // 0xA2
-	var second uint16 = uint16(chip8.Memory[chip8.Pc+1]) // 0x3B
-	first = first << 8                                   // 0xA200  décale le byte de 8 / ajoute un byte derrière
+	var opcode uint16
 
-	var opcode uint16 = first | second // 0xA23B   OR du byte vide
+	// freeze the program if end of memory / program. Or out of range.
+	if chip8.Pc >= 4096-1 {
+		fmt.Println("End of program")
+		opcode = 0x0
+	} else { // else get the opcode
+		var first uint16 = uint16(chip8.Memory[chip8.Pc])    // 0xA2
+		var second uint16 = uint16(chip8.Memory[chip8.Pc+1]) // 0x3B
+		first = first << 8                                   // 0xA200  décale le byte de 8 / ajoute un byte derrière
+
+		opcode = first | second // 0xA23B   OR du byte vide
+	}
+
 	chip8.Opcode = opcode
 
 	opcode1 := opcode >> 12          // 0xA  first hexa number
@@ -250,4 +260,5 @@ func (chip8 *Chip8) EmulateOneCycle() {
 	}
 
 	chip8.Pc += 2 // go to next instruction
+
 }

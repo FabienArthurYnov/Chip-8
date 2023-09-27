@@ -4,6 +4,7 @@ import (
 	"chip-8/periph"
 	"chip-8/structs"
 	"chip-8/utility"
+	"fmt"
 	"time"
 
 	"github.com/faiface/pixel"
@@ -33,6 +34,7 @@ func run() {
 
 	var fileName string = utility.InputFileName()
 	chip8.Load(fileName) // load the game into the memory
+	fmt.Println(chip8.Memory)
 
 	for !window.Closed() {
 		window.Update()
