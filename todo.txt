@@ -1,16 +1,10 @@
-Drawing system (screen)
-
 keyboard system
 
-loading memory from roam system
 
 
 
 
 mainStruct opcode :
-0x00E0 (clear screen)
-
-0xDXYN (draws)
 
 keyboard ;
 0xEX9E

@@ -3,9 +3,12 @@ package structs
 import (
 	"chip-8/utility"
 	"fmt"
+	"image/color"
 	"io/ioutil"
 	"log"
 	"os"
+
+	"github.com/faiface/pixel/pixelgl"
 )
 
 type Chip8 struct {
@@ -22,8 +25,9 @@ type Chip8 struct {
 	Stack        [16]int // addresses stacks
 	StackPointer int     // where are we in the stack
 
-	Screen   [64][32]bool // true = white pixel, false = black pixel
-	Keyboard [16]byte     // not sure about type
+	ScreenTable [64][32]bool // true = white pixel, false = black pixel
+	Display     *pixelgl.Window
+	Keyboard    [16]byte // not sure about type
 
 	DrawFlag bool // do we update the screen ?  yes when clear screen or draw sprite
 }
@@ -65,6 +69,8 @@ func (chip8 *Chip8) EmulateOneCycle() {
 		opcode = first | second // 0xA23B   OR du byte vide
 	}
 
+	// fmt.Printf("0x%X\n", opcode)
+
 	chip8.Opcode = opcode
 
 	opcode1 := opcode >> 12          // 0xA  first hexa number
@@ -80,7 +86,7 @@ func (chip8 *Chip8) EmulateOneCycle() {
 	case 0x0:
 		if opcode == 0x00E0 {
 			chip8.DrawFlag = true
-			// clear screen
+			chip8.Display.Clear(color.Black)
 		}
 		if opcode == 0x00EE {
 			// return from subroutine
@@ -192,10 +198,40 @@ func (chip8 *Chip8) EmulateOneCycle() {
 		chip8.Reg[opcode2] = utility.RandomByte() & opcode34 // Vx = random number & opcode34
 
 	case 0xd:
-		chip8.DrawFlag = true
 		/*Draws a sprite at coordinate (VX, VY) that has a width of 8 pixels and a height of N pixels.
 		Each row of 8 pixels is read as bit-coded starting from memory location I; I value does not change after the execution of this instruction.
 		As described above, VF is set to 1 if any screen pixels are flipped from set to unset when the sprite is drawn, and to 0 if that does not happen.*/
+		chip8.DrawFlag = true
+		tempI := chip8.I
+		x := chip8.Reg[opcode2]
+		y := chip8.Reg[opcode3]
+		n := chip8.Reg[opcode4]
+		setToTrue := false
+		if n == 0 {
+			n = 16
+		} else {
+			n -= 1
+		} // When opcode4 = F, it's 0 instead of 16
+
+		for i := 0; i < int(n); i++ { // par ligne
+			rowByte := chip8.Memory[tempI]
+			tempI += 1
+			for j := 0; j < 8; j++ { // par pixel
+				bit := (rowByte & (1 << i)) != 0
+				if !chip8.ScreenTable[x][y] && bit { // si pixel set to true
+					setToTrue = true
+				}
+				chip8.ScreenTable[x][y] = bit
+				x += 1
+			}
+			y += 1
+			x = chip8.Reg[opcode2] // to make a new line, need to go back to start X
+		}
+		if setToTrue {
+			chip8.Reg[0xF] = 1
+		} else {
+			chip8.Reg[0xF] = 0
+		}
 
 	case 0xe:
 		switch opcode34 {

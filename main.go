@@ -29,7 +29,7 @@ func run() {
 	chip8 := structs.Chip8{}
 	timeStart := time.Now()
 
-	periph.SetupGraphics()
+	chip8.Display = window
 	periph.SetupInput()
 
 	var fileName string = utility.InputFileName()
@@ -37,7 +37,6 @@ func run() {
 	fmt.Println(chip8.Memory)
 
 	for !window.Closed() {
-		window.Update()
 		chip8.EmulateOneCycle() // emulate one cycle
 
 		if time.Now().Sub(timeStart) > time.Second { // when one second has past
@@ -51,7 +50,7 @@ func run() {
 		}
 
 		if chip8.DrawFlag { //if drawFlag is true
-			//DrawGraphics()
+			periph.UpdateGraph(chip8)
 		}
 		chip8.DrawFlag = false
 
