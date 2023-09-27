@@ -1,6 +1,11 @@
 package structs
 
-import "chip-8/utility"
+import (
+	"chip-8/utility"
+	"io/ioutil"
+	"log"
+	"os"
+)
 
 type Chip8 struct {
 	Opcode uint16
@@ -22,8 +27,24 @@ type Chip8 struct {
 	DrawFlag bool // do we update the screen ?  yes when clear screen or draw sprite
 }
 
-func (chip8 *Chip8) Load() {
+func (chip8 *Chip8) Load(fileName string) {
 	chip8.Pc = 512
+
+	file, err := os.OpenFile("./rom/" + fileName + ".ch8", os.O_RDONLY, 0777)
+	if err != nil {
+		log.Fatal(err)
+	}
+	
+	defer file.Close()
+
+	fileByte, err := ioutil.ReadAll(file) 
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for i:= 0; i < len(fileByte); i++ {
+		chip8.Memory[i + 512] = fileByte[i]
+	}
 	//WIP
 }
 
