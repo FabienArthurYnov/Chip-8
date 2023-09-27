@@ -228,5 +228,5 @@ func (chip8 *Chip8) EmulateOneCycle() {
 		}
 	}
 
-	chip8.Pc += 2
+	chip8.Pc += 2 // go to next instruction
 }

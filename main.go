@@ -4,9 +4,26 @@ import (
 	"chip-8/periph"
 	"chip-8/structs"
 	"time"
+
+	"github.com/faiface/pixel"
+	"github.com/faiface/pixel/pixelgl"
 )
 
 func main() {
+	pixelgl.Run(run)
+}
+
+func run() {
+	cfgWindow := pixelgl.WindowConfig{
+		Title:  "Chip-8 Emulator",
+		Bounds: pixel.R(0, 0, 640, 320),
+		VSync:  true,
+	}
+	window, err := pixelgl.NewWindow(cfgWindow)
+	if err != nil {
+		panic(err)
+	}
+
 	chip8 := structs.Chip8{}
 	timeStart := time.Now()
 
@@ -14,8 +31,8 @@ func main() {
 	periph.SetupInput()
 
 	chip8.Load() // load the game into the memory
-
-	for true {
+	for !window.Closed() {
+		window.Update()
 		chip8.EmulateOneCycle() // emulate one cycle
 
 		if time.Now().Sub(timeStart) > time.Second { // when one second has past
