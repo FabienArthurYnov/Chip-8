@@ -2,7 +2,6 @@ package periph
 
 import (
 	"chip-8/structs"
-	"fmt"
 	"image/color"
 
 	"github.com/faiface/pixel"
@@ -15,7 +14,6 @@ func UpdateGraph(chip8 structs.Chip8) {
 	for i, _ := range chip8.ScreenTable {
 		for j, _ := range chip8.ScreenTable[i] {
 			if chip8.ScreenTable[i][j] { // si pixel true (white)
-				fmt.Println(i, j)
 				imd := imdraw.New(nil)
 				imd.Color = color.White
 				imd.Push(pixel.V(float64(i*10), float64(j*10)))

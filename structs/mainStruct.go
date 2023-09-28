@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"time"
 
 	"github.com/faiface/pixel/pixelgl"
 )
@@ -61,6 +62,7 @@ func (chip8 *Chip8) EmulateOneCycle() {
 	if chip8.Pc >= 4096-1 {
 		fmt.Println("End of program")
 		opcode = 0x0
+		time.Sleep(time.Minute)
 	} else { // else get the opcode
 		var first uint16 = uint16(chip8.Memory[chip8.Pc])    // 0xA2
 		var second uint16 = uint16(chip8.Memory[chip8.Pc+1]) // 0x3B
@@ -69,7 +71,9 @@ func (chip8 *Chip8) EmulateOneCycle() {
 		opcode = first | second // 0xA23B   OR du byte vide
 	}
 
+	// DEBUG
 	// fmt.Printf("0x%X\n", opcode)
+	// time.Sleep(time.Second)
 
 	chip8.Opcode = opcode
 
@@ -205,27 +209,34 @@ func (chip8 *Chip8) EmulateOneCycle() {
 		tempI := chip8.I
 		x := chip8.Reg[opcode2]
 		y := chip8.Reg[opcode3]
-		n := chip8.Reg[opcode4]
-		setToTrue := false
-		if n == 0 {
-			n = 16
-		} else {
-			n -= 1
-		} // When opcode4 = F, it's 0 instead of 16
+		n := opcode4
 
-		for i := 0; i < int(n); i++ { // par ligne
+		fmt.Printf("%X\n", n)
+
+		nInt := int(n)
+
+		fmt.Println(nInt)
+
+		setToTrue := false
+
+		// fmt.Printf("0x%X\n", opcode) //DEBUG opcode and x,y,n,I
+		// fmt.Println(x, y, n, tempI)
+
+		for i := 0; i < nInt; i++ { // par ligne
 			rowByte := chip8.Memory[tempI]
+			// fmt.Printf("0b%b\n", rowByte)  //debug view all bits
 			tempI += 1
-			for j := 0; j < 8; j++ { // par pixel
-				bit := (rowByte & (1 << i)) != 0
-				if !chip8.ScreenTable[x][y] && bit { // si pixel set to true
+			for j := 8; j > 0; j-- { // par pixel
+				bit := (rowByte & (1 << j)) != 0
+				if !chip8.ScreenTable[x][32-y] && bit { // si pixel set to true
 					setToTrue = true
 				}
-				chip8.ScreenTable[x][y] = bit
+				chip8.ScreenTable[x][32-y] = bit
 				x += 1
 			}
 			y += 1
 			x = chip8.Reg[opcode2] // to make a new line, need to go back to start X
+
 		}
 		if setToTrue {
 			chip8.Reg[0xF] = 1
