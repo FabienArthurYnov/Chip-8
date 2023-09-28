@@ -211,22 +211,17 @@ func (chip8 *Chip8) EmulateOneCycle() {
 		y := chip8.Reg[opcode3]
 		n := opcode4
 
-		fmt.Printf("%X\n", n)
-
 		nInt := int(n)
-
-		fmt.Println(nInt)
 
 		setToTrue := false
 
 		// fmt.Printf("0x%X\n", opcode) //DEBUG opcode and x,y,n,I
-		// fmt.Println(x, y, n, tempI)
+		fmt.Println(x, y, n, tempI)
 
 		for i := 0; i < nInt; i++ { // par ligne
 			rowByte := chip8.Memory[tempI]
 			// fmt.Printf("0b%b\n", rowByte)  //debug view all bits
-			tempI += 1
-			for j := 8; j > 0; j-- { // par pixel
+			for j := 7; j >= 0; j-- { // par pixel
 				bit := (rowByte & (1 << j)) != 0
 				if !chip8.ScreenTable[x][32-y] && bit { // si pixel set to true
 					setToTrue = true
@@ -236,6 +231,7 @@ func (chip8 *Chip8) EmulateOneCycle() {
 			}
 			y += 1
 			x = chip8.Reg[opcode2] // to make a new line, need to go back to start X
+			tempI += 1
 
 		}
 		if setToTrue {
