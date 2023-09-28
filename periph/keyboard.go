@@ -15,7 +15,7 @@ func SetKeys() {
 
 }
 
-func detectedKey() {
+func detectedKey() []bool {
 	if err := keyboard.Open(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -86,4 +86,6 @@ func detectedKey() {
 			keyPressed = append(keyPressed, false)
 		}
 	}
+	return keyPressed
+
 }
