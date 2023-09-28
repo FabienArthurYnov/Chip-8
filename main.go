@@ -1,7 +1,7 @@
 package main
 
 import (
-	"chip-8/periph"
+	"chip-8/periph/graphics"
 	"chip-8/structs"
 	"chip-8/utility"
 	"fmt"
@@ -30,7 +30,6 @@ func run() {
 	timeStart := time.Now()
 
 	chip8.Display = window
-	periph.SetupInput()
 
 	var fileName string = utility.InputFileName()
 	chip8.Load(fileName) // load the game into the memory
@@ -50,10 +49,9 @@ func run() {
 		}
 
 		if chip8.DrawFlag { //if drawFlag is true
-			periph.UpdateGraph(chip8)
+			graphics.UpdateGraph(chip8)
 		}
 		chip8.DrawFlag = false
 
-		periph.SetKeys() // set the keys pressed
 	}
 }

@@ -1,6 +1,7 @@
 package structs
 
 import (
+	"chip-8/periph/keyboard"
 	"chip-8/utility"
 	"fmt"
 	"image/color"
@@ -152,13 +153,14 @@ func (chip8 *Chip8) EmulateOneCycle() {
 			var temp1 uint16 = uint16(chip8.Reg[opcode2])
 			var temp2 uint16 = uint16(chip8.Reg[opcode3])
 			result := temp1 + temp2
-			var mask uint16 = 0b100000000 // 9th bit
-			if (result & mask) != 0 {     // then the 9th bit is 1, so there is a carry
+			if result > 255 { // if it doesn't fit in a byte, we have Vf = 1
 				chip8.Reg[0xF] = 0x1
 			} else {
 				chip8.Reg[0xF] = 0x0
 			}
-			chip8.Reg[opcode2] = byte(result) // add
+			if opcode2 != 0xf { // if not flag
+				chip8.Reg[opcode2] = byte(result) // add
+			}
 
 		case 0x5:
 			if chip8.Reg[opcode2] < chip8.Reg[opcode3] { // will be negative, needs borrow : flag = 0
@@ -166,7 +168,9 @@ func (chip8 *Chip8) EmulateOneCycle() {
 			} else {
 				chip8.Reg[0xF] = 0x1
 			}
-			chip8.Reg[opcode2] -= chip8.Reg[opcode3] //sub reg[op2]-reg[op3]
+			if opcode2 != 0xF { // if not flag
+				chip8.Reg[opcode2] -= chip8.Reg[opcode3] //sub reg[op2]-reg[op3]
+			}
 
 		case 0x6:
 			chip8.Reg[0xF] = chip8.Reg[opcode2] & 0b00000001 // get least significant bit
@@ -178,7 +182,9 @@ func (chip8 *Chip8) EmulateOneCycle() {
 			} else {
 				chip8.Reg[0xF] = 0x1
 			}
-			chip8.Reg[opcode2] = chip8.Reg[opcode3] - chip8.Reg[opcode2] //sub reg[op3]-reg[op2]
+			if opcode2 != 0xF {
+				chip8.Reg[opcode2] = chip8.Reg[opcode3] - chip8.Reg[opcode2] //sub reg[op3]-reg[op2]
+			}
 
 		case 0xE:
 			chip8.Reg[0xF] = chip8.Reg[opcode2] & 0b10000000 // get most significant bit
@@ -215,8 +221,8 @@ func (chip8 *Chip8) EmulateOneCycle() {
 
 		setToTrue := false
 
-		fmt.Printf("0x%X\n", opcode) //DEBUG opcode and x,y,n,I
-		fmt.Println(x, y, n, tempI)
+		// fmt.Printf("0x%X\n", opcode) //DEBUG opcode and x,y,n,I
+		// fmt.Println(x, y, n, tempI)
 
 		for i := 0; i < nInt; i++ { // par ligne
 			rowByte := chip8.Memory[tempI]
@@ -252,11 +258,19 @@ func (chip8 *Chip8) EmulateOneCycle() {
 			// if the keycode in chip8.Reg[opcode2] is pressed {
 			// 		chip8.Pc += 2 // skip the next instruction
 			// }
+			keys := keyboard.DetectedKey()
+			if keys[chip8.Reg[opcode2]] {
+				chip8.Pc += 2
+			}
 
 		case 0xa1:
 			// if the keycode in chip8.Reg[opcode2] is NOT pressed {
 			// 		chip8.Pc += 2 // skip the next instruction
 			// }
+			keys := keyboard.DetectedKey()
+			if !keys[chip8.Reg[opcode2]] {
+				chip8.Pc += 2
+			}
 		}
 
 	case 0xf:

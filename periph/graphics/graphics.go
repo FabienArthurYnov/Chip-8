@@ -1,4 +1,4 @@
-package periph
+package graphics
 
 import (
 	"chip-8/structs"

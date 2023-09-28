@@ -1,4 +1,4 @@
-package periph
+package keyboard
 
 import (
 	"fmt"
@@ -15,7 +15,7 @@ func SetKeys() {
 
 }
 
-func detectedKey() []bool {
+func DetectedKey() []bool {
 	if err := keyboard.Open(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
