@@ -99,7 +99,7 @@ func (chip8 *Chip8) EmulateOneCycle() {
 		}
 
 	case 0x1:
-		chip8.Pc = int(opcode234) //goto opcode234
+		chip8.Pc = int(opcode234) - 2 //goto opcode234
 
 	case 0x2:
 		//call subroutine at opcode234
@@ -107,7 +107,7 @@ func (chip8 *Chip8) EmulateOneCycle() {
 		chip8.Stack[chip8.StackPointer] = chip8.Pc
 		chip8.StackPointer++
 		// go to subroutine
-		chip8.Pc = int(chip8.Reg[opcode234])
+		chip8.Pc = int(opcode234) - 2
 
 	case 0x3:
 		if chip8.Reg[opcode2] == opcode34 {
@@ -215,7 +215,7 @@ func (chip8 *Chip8) EmulateOneCycle() {
 
 		setToTrue := false
 
-		// fmt.Printf("0x%X\n", opcode) //DEBUG opcode and x,y,n,I
+		fmt.Printf("0x%X\n", opcode) //DEBUG opcode and x,y,n,I
 		fmt.Println(x, y, n, tempI)
 
 		for i := 0; i < nInt; i++ { // par ligne
@@ -223,13 +223,19 @@ func (chip8 *Chip8) EmulateOneCycle() {
 			// fmt.Printf("0b%b\n", rowByte)  //debug view all bits
 			for j := 7; j >= 0; j-- { // par pixel
 				bit := (rowByte & (1 << j)) != 0
-				if !chip8.ScreenTable[x][32-y] && bit { // si pixel set to true
+				if !chip8.ScreenTable[x][31-y] && bit { // si pixel set to true
 					setToTrue = true
 				}
-				chip8.ScreenTable[x][32-y] = bit
+				chip8.ScreenTable[x][31-y] = bit
 				x += 1
+				if x >= 64 { // avoid going out of screen
+					break
+				}
 			}
 			y += 1
+			if y >= 32 { // avoid going out of screen
+				break
+			}
 			x = chip8.Reg[opcode2] // to make a new line, need to go back to start X
 			tempI += 1
 
@@ -281,13 +287,13 @@ func (chip8 *Chip8) EmulateOneCycle() {
 			tens := (numInt - hundreds*100) / 10
 			units := (numInt - hundreds*100 - tens*10)
 			chip8.Memory[chip8.I] = byte(hundreds)
-			chip8.Memory[chip8.I] = byte(tens)
-			chip8.Memory[chip8.I] = byte(units)
+			chip8.Memory[chip8.I+1] = byte(tens)
+			chip8.Memory[chip8.I+2] = byte(units)
 
 		case 0x55:
 			// save dans la mémoire
 			index := chip8.I
-			for i := 0; i > int(opcode2); i++ {
+			for i := 0; i <= int(opcode2); i++ {
 				chip8.Memory[index] = chip8.Reg[i]
 				index += 1
 			}
@@ -295,7 +301,7 @@ func (chip8 *Chip8) EmulateOneCycle() {
 		case 0x65:
 			// load dans la mémoire
 			index := chip8.I
-			for i := 0; i > int(opcode2); i++ {
+			for i := 0; i <= int(opcode2); i++ {
 				chip8.Reg[i] = chip8.Memory[index]
 				index += 1
 			}
