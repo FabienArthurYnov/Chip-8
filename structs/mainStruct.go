@@ -73,7 +73,7 @@ func (chip8 *Chip8) EmulateOneCycle() {
 	}
 
 	// DEBUG
-	// fmt.Printf("0x%X\n", opcode)
+	// 	fmt.Printf("0x%X\n", opcode)
 	// time.Sleep(time.Second)
 
 	chip8.Opcode = opcode
@@ -258,7 +258,10 @@ func (chip8 *Chip8) EmulateOneCycle() {
 			// if the keycode in chip8.Reg[opcode2] is pressed {
 			// 		chip8.Pc += 2 // skip the next instruction
 			// }
-			keys := keyboard.DetectedKey()
+			var keys [16]bool
+			fmt.Println("start")
+			keyboard.DetectedKey(keyboard.SetupInput(), keys)
+			fmt.Println(keys)
 			if keys[chip8.Reg[opcode2]] {
 				chip8.Pc += 2
 			}
@@ -267,7 +270,10 @@ func (chip8 *Chip8) EmulateOneCycle() {
 			// if the keycode in chip8.Reg[opcode2] is NOT pressed {
 			// 		chip8.Pc += 2 // skip the next instruction
 			// }
-			keys := keyboard.DetectedKey()
+			var keys [16]bool
+			fmt.Println("start")
+			keyboard.DetectedKey(keyboard.SetupInput(), keys)
+			fmt.Println(keys)
 			if !keys[chip8.Reg[opcode2]] {
 				chip8.Pc += 2
 			}
