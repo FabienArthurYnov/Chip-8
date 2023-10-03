@@ -21,6 +21,8 @@ func run() {
 		Bounds: pixel.R(0, 0, 640, 320),
 		VSync:  true,
 	}
+
+	var err error
 	window, err := pixelgl.NewWindow(cfgWindow)
 	if err != nil {
 		panic(err)

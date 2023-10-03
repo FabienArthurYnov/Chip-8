@@ -31,8 +31,11 @@ type Chip8 struct {
 	Display     *pixelgl.Window
 	Keyboard    [16]byte // not sure about type
 
+
 	DrawFlag bool // do we update the screen ?  yes when clear screen or draw sprite
 }
+
+
 
 func (chip8 *Chip8) Load(fileName string) {
 	chip8.Pc = 512
@@ -258,25 +261,30 @@ func (chip8 *Chip8) EmulateOneCycle() {
 			// if the keycode in chip8.Reg[opcode2] is pressed {
 			// 		chip8.Pc += 2 // skip the next instruction
 			// }
-			var keys [16]bool
+			var keys []bool
 			fmt.Println("start")
-			keyboard.DetectedKey(keyboard.SetupInput(), keys)
-			fmt.Println(keys)
-			if keys[chip8.Reg[opcode2]] {
-				chip8.Pc += 2
-			}
+			keys = keyboard.DetectedKey(chip8.Display, keys)
+			// fmt.Println(keys)
+
+				if keys[chip8.Reg[opcode2]] {
+					chip8.Pc += 2
+				}
+			
 
 		case 0xa1:
 			// if the keycode in chip8.Reg[opcode2] is NOT pressed {
 			// 		chip8.Pc += 2 // skip the next instruction
 			// }
-			var keys [16]bool
+			var keys []bool
 			fmt.Println("start")
-			keyboard.DetectedKey(keyboard.SetupInput(), keys)
-			fmt.Println(keys)
+			keys = keyboard.DetectedKey(chip8.Display, keys)
+			// fmt.Println(keys)
+
+
 			if !keys[chip8.Reg[opcode2]] {
 				chip8.Pc += 2
 			}
+
 		}
 
 	case 0xf:
