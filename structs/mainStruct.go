@@ -261,9 +261,11 @@ func (chip8 *Chip8) EmulateOneCycle() {
 			// }
 			var keys []bool
 			keys = keyboard.DetectedKey(chip8.Display, keys)
-			// fmt.Println(keys)
+			fmt.Println(keys)
 
+			fmt.Println("is", chip8.Reg[opcode2], keys[chip8.Reg[opcode2]])
 			if keys[chip8.Reg[opcode2]] {
+				fmt.Println("we have a problem")
 				chip8.Pc += 2
 			}
 
@@ -276,6 +278,7 @@ func (chip8 *Chip8) EmulateOneCycle() {
 			// fmt.Println(keys)
 
 			if !keys[chip8.Reg[opcode2]] {
+				fmt.Println(chip8.Reg[opcode2])
 				chip8.Pc += 2
 			}
 
@@ -289,6 +292,7 @@ func (chip8 *Chip8) EmulateOneCycle() {
 		case 0x0a:
 			// A key press is awaited, and then stored in VX (blocking operation, all instruction halted until next key event).
 			chip8.Reg[opcode2] = byte(keyboard.DetectedKeyPaused())
+			fmt.Println(byte(keyboard.DetectedKeyPaused()))
 
 		case 0x15:
 			chip8.DelayTimer = int(chip8.Reg[opcode2]) // set DelayTimer to Vx

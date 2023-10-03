@@ -23,9 +23,27 @@ func SetupInputPaused() rune {
 	return char
 }
 
-func DetectedKey(chip8 *pixelgl.Window, keyPressed []bool) []bool {
+func DetectedKey(display *pixelgl.Window, keyPressed []bool) []bool {
+	/*
+		keyPressed = append(keyPressed, display.Pressed(pixelgl.KeyX))
+		keyPressed = append(keyPressed, display.Pressed(pixelgl.Key1))
+		keyPressed = append(keyPressed, display.Pressed(pixelgl.Key2))
+		keyPressed = append(keyPressed, display.Pressed(pixelgl.Key3))
+		keyPressed = append(keyPressed, display.Pressed(pixelgl.KeyQ))
+		keyPressed = append(keyPressed, display.Pressed(pixelgl.KeyW))
+		keyPressed = append(keyPressed, display.Pressed(pixelgl.KeyE))
+		keyPressed = append(keyPressed, display.Pressed(pixelgl.KeyA))
+		keyPressed = append(keyPressed, display.Pressed(pixelgl.KeyS))
+		keyPressed = append(keyPressed, display.Pressed(pixelgl.KeyD))
+		keyPressed = append(keyPressed, display.Pressed(pixelgl.KeyZ))
+		keyPressed = append(keyPressed, display.Pressed(pixelgl.KeyC))
+		keyPressed = append(keyPressed, display.Pressed(pixelgl.Key4))
+		keyPressed = append(keyPressed, display.Pressed(pixelgl.KeyR))
+		keyPressed = append(keyPressed, display.Pressed(pixelgl.KeyF))
+		keyPressed = append(keyPressed, display.Pressed(pixelgl.KeyV))
 
-	if chip8.JustPressed(pixelgl.KeyX) {
+	*/
+	if display.JustPressed(pixelgl.KeyX) {
 		keyPressed = append(keyPressed, true)
 		fmt.Println("0")
 
@@ -33,7 +51,7 @@ func DetectedKey(chip8 *pixelgl.Window, keyPressed []bool) []bool {
 		keyPressed = append(keyPressed, false)
 		// fmt.Println("mauvaise touche")
 	}
-	if chip8.JustPressed(pixelgl.Key1) {
+	if display.JustPressed(pixelgl.Key1) {
 		keyPressed = append(keyPressed, true)
 		fmt.Println("1")
 
@@ -41,7 +59,7 @@ func DetectedKey(chip8 *pixelgl.Window, keyPressed []bool) []bool {
 		keyPressed = append(keyPressed, false)
 		// fmt.Println("mauvaise touche")
 	}
-	if chip8.JustPressed(pixelgl.Key2) {
+	if display.JustPressed(pixelgl.Key2) {
 		keyPressed = append(keyPressed, true)
 		fmt.Println("2")
 
@@ -49,7 +67,7 @@ func DetectedKey(chip8 *pixelgl.Window, keyPressed []bool) []bool {
 		keyPressed = append(keyPressed, false)
 		// fmt.Println("mauvaise touche")
 	}
-	if chip8.JustPressed(pixelgl.Key3) {
+	if display.JustPressed(pixelgl.Key3) {
 		keyPressed = append(keyPressed, true)
 		fmt.Println("3")
 
@@ -57,7 +75,7 @@ func DetectedKey(chip8 *pixelgl.Window, keyPressed []bool) []bool {
 		keyPressed = append(keyPressed, false)
 		// fmt.Println("mauvaise touche")
 	}
-	if chip8.JustPressed(pixelgl.Key4) {
+	if display.JustPressed(pixelgl.Key4) {
 		keyPressed = append(keyPressed, true)
 		fmt.Println("c")
 
@@ -65,7 +83,7 @@ func DetectedKey(chip8 *pixelgl.Window, keyPressed []bool) []bool {
 		keyPressed = append(keyPressed, false)
 		// fmt.Println("mauvaise touche")
 	}
-	if chip8.JustPressed(pixelgl.KeyQ) {
+	if display.JustPressed(pixelgl.KeyQ) {
 		keyPressed = append(keyPressed, true)
 		fmt.Println("4")
 
@@ -73,7 +91,7 @@ func DetectedKey(chip8 *pixelgl.Window, keyPressed []bool) []bool {
 		keyPressed = append(keyPressed, false)
 		// fmt.Println("mauvaise touche")
 	}
-	if chip8.JustPressed(pixelgl.KeyW) {
+	if display.JustPressed(pixelgl.KeyW) {
 		keyPressed = append(keyPressed, true)
 		fmt.Println("5")
 
@@ -81,7 +99,7 @@ func DetectedKey(chip8 *pixelgl.Window, keyPressed []bool) []bool {
 		keyPressed = append(keyPressed, false)
 		// fmt.Println("mauvaise touche")
 	}
-	if chip8.JustPressed(pixelgl.KeyE) {
+	if display.JustPressed(pixelgl.KeyE) {
 		keyPressed = append(keyPressed, true)
 		fmt.Println("6")
 
@@ -89,7 +107,7 @@ func DetectedKey(chip8 *pixelgl.Window, keyPressed []bool) []bool {
 		keyPressed = append(keyPressed, false)
 		// fmt.Println("mauvaise touche")
 	}
-	if chip8.JustPressed(pixelgl.KeyR) {
+	if display.JustPressed(pixelgl.KeyR) {
 		keyPressed = append(keyPressed, true)
 		fmt.Println("d")
 
@@ -97,7 +115,7 @@ func DetectedKey(chip8 *pixelgl.Window, keyPressed []bool) []bool {
 		keyPressed = append(keyPressed, false)
 		// fmt.Println("mauvaise touche")
 	}
-	if chip8.JustPressed(pixelgl.KeyA) {
+	if display.JustPressed(pixelgl.KeyA) {
 		keyPressed = append(keyPressed, true)
 		fmt.Println("7")
 
@@ -105,7 +123,7 @@ func DetectedKey(chip8 *pixelgl.Window, keyPressed []bool) []bool {
 		keyPressed = append(keyPressed, false)
 		// fmt.Println("mauvaise touche")
 	}
-	if chip8.JustPressed(pixelgl.KeyS) {
+	if display.JustPressed(pixelgl.KeyS) {
 		keyPressed = append(keyPressed, true)
 		fmt.Println("8")
 
@@ -113,7 +131,7 @@ func DetectedKey(chip8 *pixelgl.Window, keyPressed []bool) []bool {
 		keyPressed = append(keyPressed, false)
 		// fmt.Println("mauvaise touche")
 	}
-	if chip8.JustPressed(pixelgl.KeyD) {
+	if display.JustPressed(pixelgl.KeyD) {
 		keyPressed = append(keyPressed, true)
 		fmt.Println("9")
 
@@ -121,7 +139,7 @@ func DetectedKey(chip8 *pixelgl.Window, keyPressed []bool) []bool {
 		keyPressed = append(keyPressed, false)
 		// fmt.Println("mauvaise touche")
 	}
-	if chip8.JustPressed(pixelgl.KeyF) {
+	if display.JustPressed(pixelgl.KeyF) {
 		keyPressed = append(keyPressed, true)
 		fmt.Println("e")
 
@@ -129,7 +147,7 @@ func DetectedKey(chip8 *pixelgl.Window, keyPressed []bool) []bool {
 		keyPressed = append(keyPressed, false)
 		// fmt.Println("mauvaise touche")
 	}
-	if chip8.JustPressed(pixelgl.KeyZ) {
+	if display.JustPressed(pixelgl.KeyZ) {
 		keyPressed = append(keyPressed, true)
 		fmt.Println("a")
 
@@ -138,7 +156,7 @@ func DetectedKey(chip8 *pixelgl.Window, keyPressed []bool) []bool {
 		// fmt.Println("mauvaise touche")
 	}
 
-	if chip8.JustPressed(pixelgl.KeyC) {
+	if display.JustPressed(pixelgl.KeyC) {
 		keyPressed = append(keyPressed, true)
 		fmt.Println("b")
 
@@ -146,7 +164,7 @@ func DetectedKey(chip8 *pixelgl.Window, keyPressed []bool) []bool {
 		keyPressed = append(keyPressed, false)
 		// fmt.Println("mauvaise touche")
 	}
-	if chip8.JustPressed(pixelgl.KeyV) {
+	if display.JustPressed(pixelgl.KeyV) {
 		keyPressed = append(keyPressed, true)
 		fmt.Println("f")
 
@@ -155,7 +173,7 @@ func DetectedKey(chip8 *pixelgl.Window, keyPressed []bool) []bool {
 		keyPressed = append(keyPressed, false)
 	}
 
-	chip8.Update()
+	display.Update()
 
 	return keyPressed
 }
