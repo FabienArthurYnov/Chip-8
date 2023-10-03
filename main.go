@@ -37,10 +37,12 @@ func run() {
 	chip8.Load(fileName) // load the game into the memory
 	fmt.Println(chip8.Memory)
 
+	// chip8.Memory[0x1FF] = 0x1
+
 	for !window.Closed() {
 		chip8.EmulateOneCycle() // emulate one cycle
 
-		if time.Now().Sub(timeStart) > time.Second { // when one second has past
+		if time.Now().Sub(timeStart) > time.Second/60 { // when one second has past
 			if chip8.DelayTimer > 0 {
 				chip8.DelayTimer -= 1
 			}

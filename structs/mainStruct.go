@@ -73,7 +73,7 @@ func (chip8 *Chip8) EmulateOneCycle() {
 	}
 
 	// DEBUG
-	// 	fmt.Printf("0x%X\n", opcode)
+	// fmt.Printf("0x%X\n", opcode)
 	// time.Sleep(time.Second)
 
 	chip8.Opcode = opcode
@@ -90,8 +90,10 @@ func (chip8 *Chip8) EmulateOneCycle() {
 	switch opcode1 {
 	case 0x0:
 		if opcode == 0x00E0 {
+			fmt.Println("HERE")
 			chip8.DrawFlag = true
 			chip8.Display.Clear(color.Black)
+			chip8.ScreenTable = [64][32]bool{}
 		}
 		if opcode == 0x00EE {
 			// return from subroutine
@@ -163,13 +165,13 @@ func (chip8 *Chip8) EmulateOneCycle() {
 			}
 
 		case 0x5:
+			if opcode2 != 0xF { // if not flag
+				chip8.Reg[opcode2] -= chip8.Reg[opcode3] //sub reg[op2]-reg[op3]
+			}
 			if chip8.Reg[opcode2] < chip8.Reg[opcode3] { // will be negative, needs borrow : flag = 0
 				chip8.Reg[0xF] = 0x0
 			} else {
 				chip8.Reg[0xF] = 0x1
-			}
-			if opcode2 != 0xF { // if not flag
-				chip8.Reg[opcode2] -= chip8.Reg[opcode3] //sub reg[op2]-reg[op3]
 			}
 
 		case 0x6:
@@ -177,18 +179,18 @@ func (chip8 *Chip8) EmulateOneCycle() {
 			chip8.Reg[opcode2] = chip8.Reg[opcode2] >> 1     // shift to the right
 
 		case 0x7:
-			if chip8.Reg[opcode3] < chip8.Reg[opcode2] { // will be negative, needs borrow : flag = 0
+			if opcode2 != 0xF {
+				chip8.Reg[opcode2] = chip8.Reg[opcode3] - chip8.Reg[opcode2] //sub reg[op3]-reg[op2]
+			}
+			if chip8.Reg[opcode3] <= chip8.Reg[opcode2] { // will be negative, needs borrow : flag = 0
 				chip8.Reg[0xF] = 0x0
 			} else {
 				chip8.Reg[0xF] = 0x1
 			}
-			if opcode2 != 0xF {
-				chip8.Reg[opcode2] = chip8.Reg[opcode3] - chip8.Reg[opcode2] //sub reg[op3]-reg[op2]
-			}
 
 		case 0xE:
-			chip8.Reg[0xF] = chip8.Reg[opcode2] & 0b10000000 // get most significant bit
-			chip8.Reg[opcode2] = chip8.Reg[opcode2] << 1     // shift to the left
+			chip8.Reg[0xF] = chip8.Reg[opcode2] & 0b10000000           // get most significant bit
+			chip8.Reg[opcode2] = byte(uint16(chip8.Reg[opcode2]) << 1) // shift to the left
 		}
 
 	case 0x9:
@@ -261,11 +263,7 @@ func (chip8 *Chip8) EmulateOneCycle() {
 			// }
 			var keys []bool
 			keys = keyboard.DetectedKey(chip8.Display, keys)
-			fmt.Println(keys)
-
-			fmt.Println("is", chip8.Reg[opcode2], keys[chip8.Reg[opcode2]])
 			if keys[chip8.Reg[opcode2]] {
-				fmt.Println("we have a problem")
 				chip8.Pc += 2
 			}
 
@@ -275,10 +273,8 @@ func (chip8 *Chip8) EmulateOneCycle() {
 			// }
 			var keys []bool
 			keys = keyboard.DetectedKey(chip8.Display, keys)
-			fmt.Println(keys)
 
 			if !keys[chip8.Reg[opcode2]] {
-				fmt.Println(chip8.Reg[opcode2])
 				chip8.Pc += 2
 			}
 
@@ -291,6 +287,7 @@ func (chip8 *Chip8) EmulateOneCycle() {
 
 		case 0x0a:
 			// A key press is awaited, and then stored in VX (blocking operation, all instruction halted until next key event).
+			fmt.Println("HERE")
 			chip8.Reg[opcode2] = byte(keyboard.DetectedKeyPaused())
 			fmt.Println(byte(keyboard.DetectedKeyPaused()))
 
