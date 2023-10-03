@@ -275,7 +275,7 @@ func (chip8 *Chip8) EmulateOneCycle() {
 			// }
 			var keys []bool
 			keys = keyboard.DetectedKey(chip8.Display, keys)
-			// fmt.Println(keys)
+			fmt.Println(keys)
 
 			if !keys[chip8.Reg[opcode2]] {
 				fmt.Println(chip8.Reg[opcode2])

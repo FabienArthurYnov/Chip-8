@@ -24,149 +24,130 @@ func SetupInputPaused() rune {
 }
 
 func DetectedKey(display *pixelgl.Window, keyPressed []bool) []bool {
-	/*
-		keyPressed = append(keyPressed, display.Pressed(pixelgl.KeyX))
-		keyPressed = append(keyPressed, display.Pressed(pixelgl.Key1))
-		keyPressed = append(keyPressed, display.Pressed(pixelgl.Key2))
-		keyPressed = append(keyPressed, display.Pressed(pixelgl.Key3))
-		keyPressed = append(keyPressed, display.Pressed(pixelgl.KeyQ))
-		keyPressed = append(keyPressed, display.Pressed(pixelgl.KeyW))
-		keyPressed = append(keyPressed, display.Pressed(pixelgl.KeyE))
-		keyPressed = append(keyPressed, display.Pressed(pixelgl.KeyA))
-		keyPressed = append(keyPressed, display.Pressed(pixelgl.KeyS))
-		keyPressed = append(keyPressed, display.Pressed(pixelgl.KeyD))
-		keyPressed = append(keyPressed, display.Pressed(pixelgl.KeyZ))
-		keyPressed = append(keyPressed, display.Pressed(pixelgl.KeyC))
-		keyPressed = append(keyPressed, display.Pressed(pixelgl.Key4))
-		keyPressed = append(keyPressed, display.Pressed(pixelgl.KeyR))
-		keyPressed = append(keyPressed, display.Pressed(pixelgl.KeyF))
-		keyPressed = append(keyPressed, display.Pressed(pixelgl.KeyV))
-
-	*/
-	if display.JustPressed(pixelgl.KeyX) {
+	if display.Pressed(pixelgl.KeyX) {
 		keyPressed = append(keyPressed, true)
-		fmt.Println("0")
+		// fmt.Println("0")
 
 	} else {
 		keyPressed = append(keyPressed, false)
 		// fmt.Println("mauvaise touche")
 	}
-	if display.JustPressed(pixelgl.Key1) {
+	if display.Pressed(pixelgl.Key1) {
 		keyPressed = append(keyPressed, true)
-		fmt.Println("1")
+		// fmt.Println("1")
 
 	} else {
 		keyPressed = append(keyPressed, false)
 		// fmt.Println("mauvaise touche")
 	}
-	if display.JustPressed(pixelgl.Key2) {
+	if display.Pressed(pixelgl.Key2) {
 		keyPressed = append(keyPressed, true)
-		fmt.Println("2")
+		// fmt.Println("2")
 
 	} else {
 		keyPressed = append(keyPressed, false)
 		// fmt.Println("mauvaise touche")
 	}
-	if display.JustPressed(pixelgl.Key3) {
+	if display.Pressed(pixelgl.Key3) {
 		keyPressed = append(keyPressed, true)
-		fmt.Println("3")
+		//fmt.Println("3")
 
 	} else {
 		keyPressed = append(keyPressed, false)
 		// fmt.Println("mauvaise touche")
 	}
-	if display.JustPressed(pixelgl.Key4) {
+	if display.Pressed(pixelgl.Key4) {
 		keyPressed = append(keyPressed, true)
-		fmt.Println("c")
+		//fmt.Println("c")
 
 	} else {
 		keyPressed = append(keyPressed, false)
 		// fmt.Println("mauvaise touche")
 	}
-	if display.JustPressed(pixelgl.KeyQ) {
+	if display.Pressed(pixelgl.KeyQ) {
 		keyPressed = append(keyPressed, true)
-		fmt.Println("4")
+		//fmt.Println("4")
 
 	} else {
 		keyPressed = append(keyPressed, false)
 		// fmt.Println("mauvaise touche")
 	}
-	if display.JustPressed(pixelgl.KeyW) {
+	if display.Pressed(pixelgl.KeyW) {
 		keyPressed = append(keyPressed, true)
-		fmt.Println("5")
+		//fmt.Println("5")
 
 	} else {
 		keyPressed = append(keyPressed, false)
 		// fmt.Println("mauvaise touche")
 	}
-	if display.JustPressed(pixelgl.KeyE) {
+	if display.Pressed(pixelgl.KeyE) {
 		keyPressed = append(keyPressed, true)
-		fmt.Println("6")
+		//fmt.Println("6")
 
 	} else {
 		keyPressed = append(keyPressed, false)
 		// fmt.Println("mauvaise touche")
 	}
-	if display.JustPressed(pixelgl.KeyR) {
+	if display.Pressed(pixelgl.KeyR) {
 		keyPressed = append(keyPressed, true)
-		fmt.Println("d")
+		//fmt.Println("d")
 
 	} else {
 		keyPressed = append(keyPressed, false)
 		// fmt.Println("mauvaise touche")
 	}
-	if display.JustPressed(pixelgl.KeyA) {
+	if display.Pressed(pixelgl.KeyA) {
 		keyPressed = append(keyPressed, true)
-		fmt.Println("7")
+		//fmt.Println("7")
 
 	} else {
 		keyPressed = append(keyPressed, false)
 		// fmt.Println("mauvaise touche")
 	}
-	if display.JustPressed(pixelgl.KeyS) {
+	if display.Pressed(pixelgl.KeyS) {
 		keyPressed = append(keyPressed, true)
-		fmt.Println("8")
+		//fmt.Println("8")
 
 	} else {
 		keyPressed = append(keyPressed, false)
 		// fmt.Println("mauvaise touche")
 	}
-	if display.JustPressed(pixelgl.KeyD) {
+	if display.Pressed(pixelgl.KeyD) {
 		keyPressed = append(keyPressed, true)
-		fmt.Println("9")
+		//fmt.Println("9")
 
 	} else {
 		keyPressed = append(keyPressed, false)
 		// fmt.Println("mauvaise touche")
 	}
-	if display.JustPressed(pixelgl.KeyF) {
+	if display.Pressed(pixelgl.KeyF) {
 		keyPressed = append(keyPressed, true)
-		fmt.Println("e")
+		//fmt.Println("e")
 
 	} else {
 		keyPressed = append(keyPressed, false)
 		// fmt.Println("mauvaise touche")
 	}
-	if display.JustPressed(pixelgl.KeyZ) {
+	if display.Pressed(pixelgl.KeyZ) {
 		keyPressed = append(keyPressed, true)
-		fmt.Println("a")
+		//fmt.Println("a")
 
 	} else {
 		keyPressed = append(keyPressed, false)
 		// fmt.Println("mauvaise touche")
 	}
 
-	if display.JustPressed(pixelgl.KeyC) {
+	if display.Pressed(pixelgl.KeyC) {
 		keyPressed = append(keyPressed, true)
-		fmt.Println("b")
+		//fmt.Println("b")
 
 	} else {
 		keyPressed = append(keyPressed, false)
 		// fmt.Println("mauvaise touche")
 	}
-	if display.JustPressed(pixelgl.KeyV) {
+	if display.Pressed(pixelgl.KeyV) {
 		keyPressed = append(keyPressed, true)
-		fmt.Println("f")
+		//fmt.Println("f")
 
 	} else {
 		// fmt.Println("mauvaise touche")
