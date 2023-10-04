@@ -193,9 +193,9 @@ func (chip8 *Chip8) EmulateOneCycle() {
 			}
 
 		case 0xE:
-			chip8.Reg[0xF] = chip8.Reg[opcode2] & 0b10000000 // get most significant bit
+			chip8.Reg[0xF] = (chip8.Reg[opcode2] & 0b10000000) >> 7 // get most significant bit
 			if opcode2 != 0xF {
-				chip8.Reg[opcode2] = chip8.Reg[opcode2] // shift to the left
+				chip8.Reg[opcode2] = chip8.Reg[opcode2] << 1 // shift to the left
 			}
 		}
 
