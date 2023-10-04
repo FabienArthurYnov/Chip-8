@@ -90,7 +90,6 @@ func (chip8 *Chip8) EmulateOneCycle() {
 	switch opcode1 {
 	case 0x0:
 		if opcode == 0x00E0 {
-			fmt.Println("HERE")
 			chip8.DrawFlag = true
 			chip8.Display.Clear(color.Black)
 			chip8.ScreenTable = [64][32]bool{}
@@ -165,18 +164,23 @@ func (chip8 *Chip8) EmulateOneCycle() {
 			}
 
 		case 0x5:
-			if opcode2 != 0xF { // if not flag
-				chip8.Reg[opcode2] -= chip8.Reg[opcode3] //sub reg[op2]-reg[op3]
-			}
-			if chip8.Reg[opcode2] < chip8.Reg[opcode3] { // will be negative, needs borrow : flag = 0
+			var temp1 int16 = int16(chip8.Reg[opcode2])
+			var temp2 int16 = int16(chip8.Reg[opcode3])
+			result := temp1 - temp2
+			if result < 0 { // will be negative, needs borrow : flag = 0
 				chip8.Reg[0xF] = 0x0
 			} else {
 				chip8.Reg[0xF] = 0x1
 			}
+			if opcode2 != 0xF { // if not flag
+				chip8.Reg[opcode2] = byte(result) //sub reg[op2]-reg[op3]
+			}
 
 		case 0x6:
 			chip8.Reg[0xF] = chip8.Reg[opcode2] & 0b00000001 // get least significant bit
-			chip8.Reg[opcode2] = chip8.Reg[opcode2] >> 1     // shift to the right
+			if opcode2 != 0xF {
+				chip8.Reg[opcode2] = chip8.Reg[opcode2] >> 1 // shift to the right
+			}
 
 		case 0x7:
 			if opcode2 != 0xF {
@@ -189,8 +193,10 @@ func (chip8 *Chip8) EmulateOneCycle() {
 			}
 
 		case 0xE:
-			chip8.Reg[0xF] = chip8.Reg[opcode2] & 0b10000000           // get most significant bit
-			chip8.Reg[opcode2] = byte(uint16(chip8.Reg[opcode2]) << 1) // shift to the left
+			chip8.Reg[0xF] = chip8.Reg[opcode2] & 0b10000000 // get most significant bit
+			if opcode2 != 0xF {
+				chip8.Reg[opcode2] = chip8.Reg[opcode2] // shift to the left
+			}
 		}
 
 	case 0x9:
