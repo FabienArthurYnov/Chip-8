@@ -238,13 +238,19 @@ func (chip8 *Chip8) EmulateOneCycle() {
 			rowByte := chip8.Memory[tempI]
 			// fmt.Printf("0b%b\n", rowByte)  //debug view all bits
 
-			if y >= 32 { // wrap around if out of screen
+			if y > 31 { // wrap around if out of screen
 				y = y % 32
+			}
+			if y < 0 {
+				y = 31
 			}
 
 			for j := 7; j >= 0; j-- { // par pixel
-				if x >= 64 { // wrap around if out of screen
+				if x > 63 { // wrap around if out of screen
 					x = x % 64
+				}
+				if x < 0 {
+					x = 63
 				}
 				bit := (rowByte & (1 << j)) != 0
 				if chip8.ScreenTable[x][31-y] && !bit { // si pixel set to false
