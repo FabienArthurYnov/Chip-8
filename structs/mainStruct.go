@@ -142,12 +142,15 @@ func (chip8 *Chip8) EmulateOneCycle() {
 
 		case 0x1:
 			chip8.Reg[opcode2] = chip8.Reg[opcode2] | chip8.Reg[opcode3]
+			chip8.Reg[0xF] = 0x0 //vF reset, quirks
 
 		case 0x2:
 			chip8.Reg[opcode2] = chip8.Reg[opcode2] & chip8.Reg[opcode3]
+			chip8.Reg[0xF] = 0x0 //vF reset, quirks
 
 		case 0x3:
 			chip8.Reg[opcode2] = chip8.Reg[opcode2] ^ chip8.Reg[opcode3]
+			chip8.Reg[0xF] = 0x0 //vF reset, quirks
 
 		case 0x4:
 			var temp1 uint16 = uint16(chip8.Reg[opcode2])
@@ -176,9 +179,9 @@ func (chip8 *Chip8) EmulateOneCycle() {
 			}
 
 		case 0x6:
-			chip8.Reg[0xF] = chip8.Reg[opcode2] & 0b00000001 // get least significant bit
+			chip8.Reg[0xF] = chip8.Reg[opcode3] & 0b00000001 // get least significant bit
 			if opcode2 != 0xF {
-				chip8.Reg[opcode2] = chip8.Reg[opcode2] >> 1 // shift to the right
+				chip8.Reg[opcode2] = chip8.Reg[opcode3] >> 1 // shift to the right
 			}
 
 		case 0x7:
@@ -192,9 +195,9 @@ func (chip8 *Chip8) EmulateOneCycle() {
 			}
 
 		case 0xE:
-			chip8.Reg[0xF] = (chip8.Reg[opcode2] & 0b10000000) >> 7 // get most significant bit
+			chip8.Reg[0xF] = (chip8.Reg[opcode3] & 0b10000000) >> 7 // get most significant bit
 			if opcode2 != 0xF {
-				chip8.Reg[opcode2] = chip8.Reg[opcode2] << 1 // shift to the left
+				chip8.Reg[opcode2] = chip8.Reg[opcode3] << 1 // shift to the left
 			}
 		}
 
@@ -209,7 +212,7 @@ func (chip8 *Chip8) EmulateOneCycle() {
 		chip8.I = opcode234 // I register set to opcode234
 
 	case 0xb:
-		chip8.Pc = int(opcode234) + int(chip8.Reg[0x0]) // goto opcode234 + reg0
+		chip8.Pc = int(opcode234) + int(chip8.Reg[0x4]) // goto opcode234 + regX
 
 	case 0xc:
 		chip8.Reg[opcode2] = utility.RandomByte() & opcode34 // Vx = random number & opcode34
@@ -231,24 +234,18 @@ func (chip8 *Chip8) EmulateOneCycle() {
 		// fmt.Printf("0x%X\n", opcode) //DEBUG opcode and x,y,n,I
 		// fmt.Println(x, y, n, tempI)
 
-		// avoid starting out of screen
-		if x >= 64 {
-			x = 63
-		}
-		if y >= 32 {
-			y = 31
-		}
-		if x < 0 {
-			x = 0
-		}
-		if y < 0 {
-			y = 0
-		}
-
 		for i := 0; i < nInt; i++ { // par ligne
 			rowByte := chip8.Memory[tempI]
 			// fmt.Printf("0b%b\n", rowByte)  //debug view all bits
+
+			if y >= 32 { // wrap around if out of screen
+				y = y % 32
+			}
+
 			for j := 7; j >= 0; j-- { // par pixel
+				if x >= 64 { // wrap around if out of screen
+					x = x % 64
+				}
 				bit := (rowByte & (1 << j)) != 0
 				if chip8.ScreenTable[x][31-y] && !bit { // si pixel set to false
 					setToFalse = true
@@ -257,14 +254,8 @@ func (chip8 *Chip8) EmulateOneCycle() {
 					chip8.ScreenTable[x][31-y] = !chip8.ScreenTable[x][31-y]
 				}
 				x += 1
-				if x >= 64 { // avoid going out of screen
-					break
-				}
 			}
 			y += 1
-			if y >= 32 { // avoid going out of screen
-				break
-			}
 			x = chip8.Reg[opcode2] // to make a new line, need to go back to start X
 			tempI += 1
 
@@ -284,8 +275,6 @@ func (chip8 *Chip8) EmulateOneCycle() {
 			// }
 			var keys []bool
 			keys = keyboard.DetectedKey(chip8.Display, keys)
-			fmt.Printf("0x%x\n", opcode)
-			fmt.Println(chip8.Reg[opcode2])
 			if keys[chip8.Reg[opcode2]] {
 				chip8.Pc += 2
 			}
@@ -296,8 +285,6 @@ func (chip8 *Chip8) EmulateOneCycle() {
 			// }
 			var keys []bool
 			keys = keyboard.DetectedKey(chip8.Display, keys)
-			fmt.Printf("0x%x\n", opcode)
-			fmt.Println(chip8.Reg[opcode2])
 			if !keys[chip8.Reg[opcode2]] {
 				chip8.Pc += 2
 			}
@@ -311,7 +298,6 @@ func (chip8 *Chip8) EmulateOneCycle() {
 
 		case 0x0a:
 			// A key press is awaited, and then stored in VX (blocking operation, all instruction halted until next key event).
-			fmt.Println("HERE")
 			var keys []bool
 			keys = keyboard.DetectedKeyReleased(chip8.Display, keys)
 			wait := true
@@ -350,18 +336,16 @@ func (chip8 *Chip8) EmulateOneCycle() {
 
 		case 0x55:
 			// save dans la mémoire
-			index := chip8.I
 			for i := 0; i <= int(opcode2); i++ {
-				chip8.Memory[index] = chip8.Reg[i]
-				index += 1
+				chip8.Memory[chip8.I] = chip8.Reg[i]
+				chip8.I += 1
 			}
 
 		case 0x65:
 			// load dans la mémoire
-			index := chip8.I
 			for i := 0; i <= int(opcode2); i++ {
-				chip8.Reg[i] = chip8.Memory[index]
-				index += 1
+				chip8.Reg[i] = chip8.Memory[chip8.I]
+				chip8.I += 1
 			}
 		}
 	}
