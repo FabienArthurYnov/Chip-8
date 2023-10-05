@@ -47,44 +47,26 @@ func DetectedKey(display *pixelgl.Window, keyPressed []bool) []bool {
 	return keyPressed
 }
 
-func DetectedKeyPaused() int {
-	real := SetupInputPaused()
-	final := -1
+func DetectedKeyReleased(display *pixelgl.Window, keyPressed []bool) []bool {
 
-	switch real {
-	case rune(pixelgl.KeyX):
-		final = 0x0
-	case rune(pixelgl.Key1):
-		final = 0x1
-	case rune(pixelgl.Key2):
-		final = 0x2
-	case rune(pixelgl.Key3):
-		final = 0x3
-	case rune(pixelgl.KeyQ):
-		final = 0x4
-	case rune(pixelgl.KeyW):
-		final = 0x5
-	case rune(pixelgl.KeyE):
-		final = 0x6
-	case rune(pixelgl.KeyA):
-		final = 0x7
-	case rune(pixelgl.KeyS):
-		final = 0x8
-	case rune(pixelgl.KeyD):
-		final = 0x9
-	case rune(pixelgl.KeyZ):
-		final = 0xa
-	case rune(pixelgl.KeyC):
-		final = 0xb
-	case rune(pixelgl.Key4):
-		final = 0xc
-	case rune(pixelgl.KeyR):
-		final = 0xd
-	case rune(pixelgl.KeyF):
-		final = 0xe
-	case rune(pixelgl.KeyV):
-		final = 0xf
-	}
+	keyPressed = append(keyPressed, display.JustReleased(pixelgl.KeyX))
+	keyPressed = append(keyPressed, display.JustReleased(pixelgl.Key1))
+	keyPressed = append(keyPressed, display.JustReleased(pixelgl.Key2))
+	keyPressed = append(keyPressed, display.JustReleased(pixelgl.Key3))
+	keyPressed = append(keyPressed, display.JustReleased(pixelgl.KeyQ))
+	keyPressed = append(keyPressed, display.JustReleased(pixelgl.KeyW))
+	keyPressed = append(keyPressed, display.JustReleased(pixelgl.KeyE))
+	keyPressed = append(keyPressed, display.JustReleased(pixelgl.KeyA))
+	keyPressed = append(keyPressed, display.JustReleased(pixelgl.KeyS))
+	keyPressed = append(keyPressed, display.JustReleased(pixelgl.KeyD))
+	keyPressed = append(keyPressed, display.JustReleased(pixelgl.KeyZ))
+	keyPressed = append(keyPressed, display.JustReleased(pixelgl.KeyC))
+	keyPressed = append(keyPressed, display.JustReleased(pixelgl.Key4))
+	keyPressed = append(keyPressed, display.JustReleased(pixelgl.KeyR))
+	keyPressed = append(keyPressed, display.JustReleased(pixelgl.KeyF))
+	keyPressed = append(keyPressed, display.JustReleased(pixelgl.KeyV))
 
-	return final
+	display.Update()
+
+	return keyPressed
 }

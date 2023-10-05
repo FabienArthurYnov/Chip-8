@@ -52,7 +52,6 @@ func (chip8 *Chip8) Load(fileName string) {
 	for i := 0; i < len(fileByte); i++ {
 		chip8.Memory[i+512] = fileByte[i]
 	}
-	//WIP
 }
 
 func (chip8 *Chip8) EmulateOneCycle() {
@@ -73,7 +72,7 @@ func (chip8 *Chip8) EmulateOneCycle() {
 	}
 
 	// DEBUG
-	// fmt.Printf("0x%X\n", opcode)
+	// fmt.Printf("%d : 0x%X\n", chip8.Pc, opcode)
 	// time.Sleep(time.Second)
 
 	chip8.Opcode = opcode
@@ -132,7 +131,7 @@ func (chip8 *Chip8) EmulateOneCycle() {
 		chip8.Reg[opcode2] = opcode34
 
 	case 0x7:
-		if chip8.Reg[opcode2] != 0xF { // if not flag
+		if opcode2 != 0xF { // if not flag
 			chip8.Reg[opcode2] += opcode34
 		}
 
@@ -232,6 +231,20 @@ func (chip8 *Chip8) EmulateOneCycle() {
 		// fmt.Printf("0x%X\n", opcode) //DEBUG opcode and x,y,n,I
 		// fmt.Println(x, y, n, tempI)
 
+		// avoid starting out of screen
+		if x >= 64 {
+			x = 63
+		}
+		if y >= 32 {
+			y = 31
+		}
+		if x < 0 {
+			x = 0
+		}
+		if y < 0 {
+			y = 0
+		}
+
 		for i := 0; i < nInt; i++ { // par ligne
 			rowByte := chip8.Memory[tempI]
 			// fmt.Printf("0b%b\n", rowByte)  //debug view all bits
@@ -271,7 +284,8 @@ func (chip8 *Chip8) EmulateOneCycle() {
 			// }
 			var keys []bool
 			keys = keyboard.DetectedKey(chip8.Display, keys)
-
+			fmt.Printf("0x%x\n", opcode)
+			fmt.Println(chip8.Reg[opcode2])
 			if keys[chip8.Reg[opcode2]] {
 				chip8.Pc += 2
 			}
@@ -282,7 +296,8 @@ func (chip8 *Chip8) EmulateOneCycle() {
 			// }
 			var keys []bool
 			keys = keyboard.DetectedKey(chip8.Display, keys)
-
+			fmt.Printf("0x%x\n", opcode)
+			fmt.Println(chip8.Reg[opcode2])
 			if !keys[chip8.Reg[opcode2]] {
 				chip8.Pc += 2
 			}
@@ -297,8 +312,18 @@ func (chip8 *Chip8) EmulateOneCycle() {
 		case 0x0a:
 			// A key press is awaited, and then stored in VX (blocking operation, all instruction halted until next key event).
 			fmt.Println("HERE")
-			chip8.Reg[opcode2] = byte(keyboard.DetectedKeyPaused())
-			fmt.Println(byte(keyboard.DetectedKeyPaused()))
+			var keys []bool
+			keys = keyboard.DetectedKeyReleased(chip8.Display, keys)
+			wait := true
+			for i, key := range keys {
+				if key {
+					chip8.Reg[opcode2] = byte(i)
+					wait = false
+				}
+			}
+			if wait { // go back here, nullify the usual pc += 2
+				chip8.Pc -= 2
+			}
 
 		case 0x15:
 			chip8.DelayTimer = int(chip8.Reg[opcode2]) // set DelayTimer to Vx
