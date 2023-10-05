@@ -227,7 +227,7 @@ func (chip8 *Chip8) EmulateOneCycle() {
 
 		nInt := int(n)
 
-		setToTrue := false
+		setToFalse := false
 
 		// fmt.Printf("0x%X\n", opcode) //DEBUG opcode and x,y,n,I
 		// fmt.Println(x, y, n, tempI)
@@ -237,10 +237,12 @@ func (chip8 *Chip8) EmulateOneCycle() {
 			// fmt.Printf("0b%b\n", rowByte)  //debug view all bits
 			for j := 7; j >= 0; j-- { // par pixel
 				bit := (rowByte & (1 << j)) != 0
-				if !chip8.ScreenTable[x][31-y] && bit { // si pixel set to true
-					setToTrue = true
+				if chip8.ScreenTable[x][31-y] && !bit { // si pixel set to false
+					setToFalse = true
 				}
-				chip8.ScreenTable[x][31-y] = bit
+				if bit {
+					chip8.ScreenTable[x][31-y] = !chip8.ScreenTable[x][31-y]
+				}
 				x += 1
 				if x >= 64 { // avoid going out of screen
 					break
@@ -255,7 +257,7 @@ func (chip8 *Chip8) EmulateOneCycle() {
 
 		}
 		// set the flag
-		if setToTrue {
+		if setToFalse {
 			chip8.Reg[0xF] = 1
 		} else {
 			chip8.Reg[0xF] = 0
@@ -269,6 +271,7 @@ func (chip8 *Chip8) EmulateOneCycle() {
 			// }
 			var keys []bool
 			keys = keyboard.DetectedKey(chip8.Display, keys)
+
 			if keys[chip8.Reg[opcode2]] {
 				chip8.Pc += 2
 			}
