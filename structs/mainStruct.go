@@ -253,7 +253,7 @@ func (chip8 *Chip8) EmulateOneCycle() {
 					x = 63
 				}
 				bit := (rowByte & (1 << j)) != 0
-				if chip8.ScreenTable[x][31-y] && !bit { // si pixel set to false
+				if chip8.ScreenTable[x][31-y] && bit { // si pixel set to false
 					setToFalse = true
 				}
 				if bit {
