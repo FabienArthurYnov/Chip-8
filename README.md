@@ -4,8 +4,8 @@ Ceci est un émulateur Chip-8 écrit en Go.
 Comment fonctionne l'émulateur ? : 
 
 1. Lancez chip-8.exe
-2. Mettez le nom de la ROM\n 
-Touches : 1, 2, 3, 4, q/Q, w/W, e/R, a/A, s/S, d/D, f/F, z/Z, x/X, c/C,v/V
+2. Mettez le nom de la ROM
+   Touches : 1, 2, 3, 4, q/Q, w/W, e/R, a/A, s/S, d/D, f/F, z/Z, x/X, c/C,v/V
 
 Fonctionnalités ✓ : 
 
